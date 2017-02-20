@@ -5,10 +5,8 @@
 
 #define U32_T unsigned int
 
-//U32_T ex_period[] = {2, 10, 15};
-U32_T ex_period[] = {2, 4, 5};
-//U32_T ex_period[] = {10, 2, 15, 5};
-U32_T ex_wcet[] = {1, 1, 2};
+U32_T ex_period[] = {2, 5, 10};
+U32_T ex_wcet[] = {1, 2, 1};
 
 void sort(U32_T *array)
 {
@@ -121,6 +119,8 @@ int main(void)
 #endif
 
     lcm_period = lcm(ex_period, size);
+
+    printf("LCM Period: %d\n", lcm_period);
 
     while(time < lcm_period)
     {

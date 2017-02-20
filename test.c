@@ -5,10 +5,8 @@
 
 #define U32_T unsigned int
 
-//U32_T ex_period[] = {2, 10, 15};
-U32_T ex_period[] = {2, 4, 5};
-//U32_T ex_period[] = {10, 2, 15, 5};
-U32_T ex_wcet[] = {1, 1, 2};
+U32_T ex_period[] = {2, 5, 10};
+U32_T ex_wcet[] = {1, 2, 1};
 
 
 U32_T size = sizeof(ex_period)/sizeof(U32_T);
@@ -52,6 +50,7 @@ int lcm(unsigned int *a, int n) {
     return res;
 }
 
+#if 1
 void Assign_Priorities(void)
 {
      int i = 0, j = 0;
@@ -90,9 +89,41 @@ void Assign_Priorities(void)
     printf("\n");
     
     curr_high_prio_task = task_priority[0];
-    printf("High Priority Task is %d\n", curr_high_prio_task);
+    //printf("High Priority Task is %d\n", curr_high_prio_task);
 
 }
+#else
+void Assign_Priorities(void)
+{
+    U32_T sorted_ex_period[size];
+    U32_T i = 0, j = 0;
+
+    for (i = 0; i < size; i++)
+    {
+        if (task_completed[i] == 1)
+            *(sorted_ex_period+i) = 100;
+        else
+            *(sorted_ex_period+i) = *(ex_period+i);
+    }
+
+    sort(sorted_ex_period);
+
+    for (i = 0; i < size; i++)
+    {
+        for (j = 0; j < size; j++)
+        {
+            if (ex_period[j] == sorted_ex_period[i])
+            {
+                task_priority[i] = j;
+            }
+        }
+    }
+
+   curr_high_prio_task = task_priority[0];
+   printf("High Priority Task is %d\n", curr_high_prio_task);
+
+}
+#endif
 
 int main(void)
 {
@@ -171,7 +202,9 @@ int main(void)
         *(exec_time_elapsed+i) = *(ex_wcet+i);
 
     lcm_period = lcm(ex_period, size);
-    
+
+    printf("LCM Period: %d\n", lcm_period);
+        
     while(time < lcm_period)
     {
         for (k = 0; k < size; k++)
@@ -200,12 +233,12 @@ int main(void)
             else
             {
                 printf("Executing Task %d\n", curr_high_prio_task);
-                printf("Task %d executed succesfully\n", curr_high_prio_task);
                 
                 exec_time_elapsed[curr_high_prio_task] -= 1;
                 
                 if (exec_time_elapsed[curr_high_prio_task] == 0)
                 {
+                    printf("Task %d executed succesfully\n", curr_high_prio_task);
                     task_completed[curr_high_prio_task] = 1; /* Indicating completion of task */
                 
                     if (time_elapsed[curr_high_prio_task] != 0)
